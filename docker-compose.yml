@@ -6,7 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: usos-sync:latest
     restart: unless-stopped
     env_file:
       - .env
