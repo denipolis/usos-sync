@@ -44,11 +44,7 @@ const buildLocation = (
 
 const toGoogleEvent = (
   activity: UsosActivity,
-  {
-    timezone,
-    preferredLang,
-    eventId
-  }: ToGoogleEventOptions
+  { timezone, preferredLang, eventId }: ToGoogleEventOptions
 ): calendar_v3.Schema$Event => {
   const start = parseUsosDateTime(activity.start_time || '', timezone)
   const end = parseUsosDateTime(activity.end_time || '', timezone)
@@ -56,9 +52,7 @@ const toGoogleEvent = (
   const summary =
     pickLangDictValue(activity.name, preferredLang) || 'USOS activity'
   const descriptionParts = [
-    'Source: USOS API',
-    activity.type ? `Type: ${activity.type}` : null,
-    activity.url ? `USOS URL: ${activity.url}` : null
+    activity.url ? `USOS: ${activity.url}` : null
   ].filter(Boolean) as string[]
 
   return {
@@ -228,3 +222,4 @@ export const runSync = async ({
     finishedAt: DateTime.now().setZone(timezone).toISO()
   }
 }
+
