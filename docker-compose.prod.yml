@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  usos-sync:
+    container_name: usos-sync
+    image: ghcr.io/denipolis/usos-sync:latest
+    pull_policy: always
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./config.json:/usr/src/app/config.json:rw
+    command: ["node", "dist/main.js"]
