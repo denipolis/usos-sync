@@ -1,0 +1,42 @@
+{
+  "name": "usos-sync",
+  "displayName": "USOS Sync",
+  "version": "1.0.0",
+  "description": "Sync USOS timetable to Google Calendar",
+  "type": "module",
+  "main": "dist/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/denipolis/usos-sync.git"
+  },
+  "author": {
+    "name": "Denys Polishchuk"
+  },
+  "scripts": {
+    "dev": "tsc --watch --preserveWatchOutput",
+    "build": "tsc -p tsconfig.json",
+    "start": "pnpm build && node dist/main.js",
+    "sync:once": "pnpm build && node dist/main.js --once",
+    "configure": "pnpm build && node dist/scripts/configure.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0",
+    "luxon": "^3.5.0",
+    "node-cron": "^4.0.7",
+    "oauth-1.0a": "^2.2.6",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^22.13.14",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.8.2"
+  }
+}

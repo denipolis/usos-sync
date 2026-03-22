@@ -1,0 +1,1 @@
+export type LangDict = Record<string, string> | string | null | undefined;
