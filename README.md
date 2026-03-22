@@ -27,7 +27,7 @@ A simple and easy-to-use sync tool for continuously importing your USOS schedule
 2. `cd usos-sync`
 3. Create `.env` from `.env.example`
 4. Run `pnpm install && pnpm configure` to generate `config.json`
-5. `docker compose up --build -d` (or `docker compose up -f docker-compose.prod.yml -d` to run pre-built version from GHCR)
+5. `docker compose up --build -d` (or `docker compose -f docker-compose.prod.yml up -d` to run pre-built version from GHCR)
 6. Optional logs: `docker compose logs -f usos-sync`
 7. Stop: `docker compose down`
 

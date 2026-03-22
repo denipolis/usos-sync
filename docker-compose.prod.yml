@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   usos-sync:
     container_name: usos-sync
@@ -10,4 +8,5 @@ services:
       - .env
     volumes:
       - ./config.json:/usr/src/app/config.json:rw
-    command: ["node", "dist/main.js"]
+    command: ['node', 'dist/main.js']
+
