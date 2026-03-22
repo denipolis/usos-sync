@@ -84,14 +84,15 @@ const toGoogleEvent = (
   }
 }
 
-const listSyncedEvents = async (
+const deleteMissingSyncedEvents = async (
   calendar: calendar_v3.Calendar,
   calendarId: string,
   timeMin: string,
-  timeMax: string
-): Promise<calendar_v3.Schema$Event[]> => {
-  const events: calendar_v3.Schema$Event[] = []
+  timeMax: string,
+  validSyncIds: Set<string>
+): Promise<number> => {
   let pageToken: string | undefined
+  let deleted = 0
 
   do {
     const response = await calendar.events.list({
@@ -100,15 +101,30 @@ const listSyncedEvents = async (
       timeMax,
       singleEvents: true,
       privateExtendedProperty: ['source=usos-sync'],
-      maxResults: 2500,
+      maxResults: 500,
       pageToken
     })
 
-    events.push(...(response.data.items || []))
+    const pageItems = response.data.items || []
+    for (const event of pageItems) {
+      const syncId = event?.extendedProperties?.private?.usosSyncId
+      if (!syncId) {
+        continue
+      }
+
+      if (!validSyncIds.has(syncId)) {
+        await calendar.events.delete({
+          calendarId,
+          eventId: event.id || ''
+        })
+        deleted += 1
+      }
+    }
+
     pageToken = response.data.nextPageToken || undefined
   } while (pageToken)
 
-  return events
+  return deleted
 }
 
 const upsertEvent = async (
@@ -191,31 +207,14 @@ export const runSync = async ({
     if (result === 'updated') updated += 1
   }
 
-  let deleted = 0
-
-  const existingEvents = await listSyncedEvents(
+  const validSyncIds = new Set(activityMap.keys())
+  const deleted = await deleteMissingSyncedEvents(
     calendar,
     calendarId,
     rangeStart.toUTC().toISO() || '',
-    rangeEndExclusive.toUTC().toISO() || ''
+    rangeEndExclusive.toUTC().toISO() || '',
+    validSyncIds
   )
-
-  const validSyncIds = new Set(activityMap.keys())
-
-  for (const event of existingEvents) {
-    const syncId = event?.extendedProperties?.private?.usosSyncId
-    if (!syncId) {
-      continue
-    }
-
-    if (!validSyncIds.has(syncId)) {
-      await calendar.events.delete({
-        calendarId,
-        eventId: event.id || ''
-      })
-      deleted += 1
-    }
-  }
 
   return {
     fetched: rawActivities.length,
